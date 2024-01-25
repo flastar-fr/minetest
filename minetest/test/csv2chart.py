@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 
 # Ouverture et lecture des données CSV depuis un fichier
-csv_data = pd.read_csv("test//donnees_couleurs.csv", delimiter=';')
+csv_data = pd.read_csv("test//datas_colors.csv", delimiter=';')
 
 # Préparation du graphique 3D
 fig = plt.figure()

@@ -1,0 +1,21 @@
+{
+  "colors" : [
+    "lightgrey",
+    "darkorange",
+    "deeppink",
+    "lightseagreen",
+    "yellow",
+    "limegreen",
+    "lightcoral",
+    "darkgrey",
+    "dimgrey",
+    "lightseagreen",
+    "darkviolet",
+    "royalblue",
+    "saddlebrown",
+    "darkgreen",
+    "red",
+    "black"
+  ],
+  "file_name" : "datas_colors.csv"
+}
