@@ -80,4 +80,4 @@ class MinetestKNN:
         assert self.model is not None, "Model is None"
         prediction = self.model.predict([[red, green, blue]])
 
-        return prediction
+        return prediction[0]

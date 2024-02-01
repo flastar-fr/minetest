@@ -29,4 +29,4 @@ class MinetestMuseum:
                 block_data = self.minetest_knn.find_closest_brick_color(red, green, blue)
 
                 z_co = self.minetest_image.get_pixel_grayscale(line, column)
-                self.minetest_client.world_set_block(x+line, y+column, z+z_co, 35, block_data[0])
+                self.minetest_client.world_set_block(x+line, y+column, z+z_co, 35, block_data)
