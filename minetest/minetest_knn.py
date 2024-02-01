@@ -11,8 +11,7 @@ class MinetestKNN:
         :attr datas: None / Any -> panda librairies format datas for the KNN algorithm
         :attr model: None / KNeighborsClassifier -> model for the KNN algorithm
     """
-    def __init__(self, colors: list):
-        self.colors = colors
+    def __init__(self):
         self.datas = None
         self.model = None
 
@@ -37,11 +36,11 @@ class MinetestKNN:
         # knn setup
         donnees = list(zip(l_red, l_green, l_blue))
         x_train, x_test, y_train, y_test = (
-            train_test_split(donnees, l_choice, test_size=0.33, random_state=42))
+            train_test_split(donnees, l_choice, test_size=0.33, random_state=11))
 
         # tests
         result = {}
-        for i in range(100):
+        for i in range(len(donnees)//2):
             k = i + 1
 
             model = KNeighborsClassifier(n_neighbors=k)
