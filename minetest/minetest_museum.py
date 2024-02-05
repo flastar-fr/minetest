@@ -1,4 +1,5 @@
-""" Museum Main File """
+""" MinetestMuseum File """
+
 from minetest_knn import MinetestKNN
 from minetest_client import MinetestClient
 from minetest_image import MinetestImage
