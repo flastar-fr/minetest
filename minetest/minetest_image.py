@@ -15,7 +15,7 @@ class MinetestImage:
         """
         image = Image.open(image_name)
         image.load()
-        self.image = image.convert("RGB")
+        self.image = image.convert("RGBA")
 
     def get_width(self) -> int:
         """ Method to get the image's width
