@@ -6,6 +6,14 @@ import socket
 class MinetestClient:
     """ Class manager of server's requests
         :attr socket: socket object -> connection to server
+
+        :method connect_to -> connect to a server
+        :method disconnect -> disconnect to a server
+        :method chat_post -> send a server message
+        :method world_set_block -> set the block given at the given coordinates
+        :method world_set_blocks -> set a 3D rectangle of blocks at the given coordinates
+        :method world_destroy_block -> replace by air at the given coordinates
+        :method world_destroy_blocks -> replace by air in the 3D rectangle at the given coordinates
     """
     def __init__(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

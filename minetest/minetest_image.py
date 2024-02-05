@@ -5,6 +5,12 @@ from PIL import Image
 class MinetestImage:
     """ Class manager of image
         :attr image: None / Image -> image
+
+        :method open -> select the image to use
+        :method get_width -> get the width of an image
+        :method get_height -> get the height of an image
+        :method get_pixel_color -> get the RGB tuple of a pixel
+        :method get_pixel_grayscale -> get the grayscale value depending on colors given
     """
     def __init__(self):
         self.image = None

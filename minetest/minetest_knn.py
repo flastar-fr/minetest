@@ -10,6 +10,11 @@ class MinetestKNN:
         :attr colors: list -> list of all colors
         :attr datas: None / Any -> panda librairies format datas for the KNN algorithm
         :attr model: None / KNeighborsClassifier -> model for the KNN algorithm
+
+        :method open -> select the datas to use
+        :method get_best_k -> get the best k parameter with the given datas for KNN algorithm
+        :method train_model -> initialize the model by giving it datas
+        :method find_closest_brick_color -> get best block data to the given RGB color
     """
     def __init__(self):
         self.datas = None
@@ -34,13 +39,13 @@ class MinetestKNN:
         l_blue = self.datas.loc[:, "blue"]
 
         # knn setup
-        donnees = list(zip(l_red, l_green, l_blue))
+        datas = list(zip(l_red, l_green, l_blue))
         x_train, x_test, y_train, y_test = (
-            train_test_split(donnees, l_choice, test_size=0.33, random_state=11))
+            train_test_split(datas, l_choice, test_size=0.33, random_state=11))
 
         # tests
         result = {}
-        for i in range(len(donnees)//2):
+        for i in range(len(datas)//2):
             k = i + 1
 
             model = KNeighborsClassifier(n_neighbors=k)
