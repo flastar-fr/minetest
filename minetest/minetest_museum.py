@@ -57,37 +57,42 @@ class MinetestMuseum:
             :param y: int -> y coordinate
             :param z: int -> z coordinate
         """
+        self.minetest_client.chat_post(f"{image_file} en cours de construction")
+
         self.minetest_image.open(image_file)
 
         image_width = self.minetest_image.get_width()
         image_height = self.minetest_image.get_height()
 
+        y += image_height    # reverse image
         # image process
         for line in range(image_width):
-            for column in reversed(range(image_height)):
+            for column in range(image_height):
                 pixel_colors = self.minetest_image.get_pixel_color(line, column)
-                if pixel_colors[-1] == 255:     # don't show if the pixel is transparente
+                if pixel_colors[-1] > 0:     # don't show if the pixel is transparente
                     red, green, blue = pixel_colors[0], pixel_colors[1], pixel_colors[2]
 
                     block_data = self.minetest_knn.find_closest_brick_color(red, green, blue)
 
                     grsc_val = self.minetest_image.get_pixel_grayscale(line, column)//100    # grayscale
 
-                    self.minetest_client.world_set_block(x+line, y+column, z+grsc_val, 35, block_data)
+                    self.draw_l_system("A", {"A": "AB", "B": "A"}, grsc_val+1,
+                                       x, y, z+grsc_val, 35, block_data)
+
+        self.minetest_client.chat_post(f"{image_file} est terminé")
 
     def draw_l_system(self, axiom: str, rules: dict, iterations: int,
                       x: int, y: int, z: int, block_id: int, block_data: int = 1):
         """ Method to draw a basic L-System structure
-        :param axiom: str -> default value to use in the L-System
-        :param rules: dict -> rules to follow in the L-System
-        :param iterations: int -> amount of rules executions
-        :param x: int -> x coordinate
-        :param y: int -> y coordinate
-        :param z: int -> z coordinate
-        :param block_id: int -> decide which block to use
-        :param block_data: int -> decide which varient (if it has) to use
+            :param axiom: str -> default value to use in the L-System
+            :param rules: dict -> rules to follow in the L-System
+            :param iterations: int -> amount of rules executions
+            :param x: int -> x coordinate
+            :param y: int -> y coordinate
+            :param z: int -> z coordinate
+            :param block_id: int -> decide which block to use
+            :param block_data: int -> decide which varient (if it has) to use
         """
-
         characters = l_system(axiom, rules, iterations)
 
         for c in characters:
@@ -98,4 +103,6 @@ class MinetestMuseum:
                 case "B":
                     y -= 1
                     z += 1
-            self.minetest_client.world_set_block(x, y, z, block_id, block_data)
+
+    def draw_video(self, image_file: str, x: int, y: int, z: int):
+        pass

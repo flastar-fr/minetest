@@ -7,7 +7,6 @@ from sklearn.model_selection import train_test_split
 
 class MinetestKNN:
     """ Class manager of color converter KNN algorithm
-        :attr colors: list -> list of all colors
         :attr datas: None / Any -> panda librairies format datas for the KNN algorithm
         :attr model: None / KNeighborsClassifier -> model for the KNN algorithm
 
@@ -57,7 +56,7 @@ class MinetestKNN:
         return maxed
 
     def train_model(self, k: int):
-        """ Method to setup the knn algorithm and training with datas
+        """ Method to setup the knn algorithm and training it with datas
             :param k: int -> k value to give for KNN algorithm
         """
         # datas extraction
