@@ -1,7 +1,7 @@
 import os
 import tkinter as tk
 from tkinter.messagebox import showinfo, showerror
-from minetest_museum import MinetestMuseum
+from minetest.minetest_museum import MinetestMuseum
 
 
 class App(tk.Tk):

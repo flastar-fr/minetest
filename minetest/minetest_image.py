@@ -24,6 +24,9 @@ class MinetestImage:
         image.load()
         self.image = image.convert("RGBA")
 
+    def open_image_from_array(self, image):
+        self.image = Image.fromarray(image)
+
     def get_width(self) -> int:
         """ Method to get the image's width
             :return int -> image's width
