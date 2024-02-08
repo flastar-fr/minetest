@@ -1,9 +1,9 @@
 """ MinetestMuseum File """
 
-from moviepy.editor import VideoFileClip
 from minetest_knn import MinetestKNN
 from minetest_client import MinetestClient
 from minetest_image import MinetestImage
+from data_exctration import reduce_frame_rate
 
 
 def l_system(axiom: str, rules: dict, iterations: int) -> str:
@@ -138,30 +138,29 @@ class MinetestMuseum:
                     self.minetest_client.world_set_block(x, y - 1, z + 1, block_id, block_data)
 
     def draw_video(self, video_file: str, x: int, y: int, z: int):
-        video = VideoFileClip(video_file)
+        self.minetest_client.chat_post("Début de la conversion")
+        video = reduce_frame_rate(video_file, 3)
+        self.minetest_client.chat_post("Fin de la conversion")
 
+        self.minetest_client.chat_post("Début de l'affichage")
         size = video.size
         for i, frame in enumerate(video.iter_frames(fps=3)):
             self.minetest_image.open_image_from_array(frame)
 
-            # Précalcul des valeurs de x et y pour éviter les répétitions
-            x_values = [x for x in range(0, size[0], size[0] // 20)]
-            y_values = [y for y in reversed(range(0, size[1], size[1] // 20))]
+            x_values = [x for x in range(0, size[0], size[0] // 30)]
+            y_values = [y for y in reversed(range(0, size[1], size[1] // 30))]
 
             for line, x_image in enumerate(x_values):
                 for column, y_image in enumerate(y_values):
-                    # Seul l'appel de self.minetest_image.get_pixel_color() est conservé dans la boucle
                     pixel_color = self.minetest_image.get_pixel_color(x_image, line)
                     red, green, blue = pixel_color[0], pixel_color[1], pixel_color[2]
 
-                    # Utilisation des valeurs précalculées pour éviter les appels répétés
                     block_data = self.minetest_knn.find_closest_brick_color(red, green, blue)
 
-                    # Mise à jour des coordonnées selon la logique de votre application
                     updated_x = x + line
                     updated_y = y + column
 
-                    # Assurez-vous que x, y, et z sont correctement définis en dehors de la boucle
                     self.minetest_client.world_set_block(updated_x, updated_y, z, 35, block_data)
             print(i)
         video.reader.close()
+        self.minetest_client.chat_post("Fin de l'affichage")
