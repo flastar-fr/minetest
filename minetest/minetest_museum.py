@@ -79,7 +79,8 @@ class MinetestMuseum:
 
                     grsc_val = self.minetest_image.get_pixel_grayscale(line, column) // 100  # grayscale
 
-                    self.minetest_client.world_set_block(x+line, y-column, z+grsc_val, 35, block_data)
+                    self.minetest_client.world_set_blocks(x+line, y-column, z+grsc_val, x+line,
+                                                          y-column, z, 35, block_data)
 
         self.minetest_client.chat_post(f"{image_file} est terminé")
 
@@ -107,12 +108,17 @@ class MinetestMuseum:
 
                     block_data = self.minetest_knn.find_closest_brick_color(red, green, blue)
 
-                    grsc_val = self.minetest_image.get_pixel_grayscale(line, column) // 20  # grayscale
+                    grsc_val = self.minetest_image.get_pixel_grayscale(line, column) // 100  # grayscale
+
+                    match block_data:
+                        case 6:
+                            block_data = 0
 
                     self.draw_l_system("A", {"A": "AB", "B": "A"}, grsc_val,
                                        x+line, y-column, z+grsc_val, 35, block_data)
 
-                    self.minetest_client.world_set_block(x + line, y - column, z + grsc_val, 35, block_data)
+                    self.minetest_client.world_set_blocks(x + line, y - column, z + grsc_val + 1, x + line,
+                                                          y - column, z, 35, block_data)
 
         self.minetest_client.chat_post(f"{image_file} est terminé")
 
@@ -144,23 +150,30 @@ class MinetestMuseum:
 
         self.minetest_client.chat_post("Début de l'affichage")
         size = video.size
-        for i, frame in enumerate(video.iter_frames(fps=3)):
+        for frame in video.iter_frames(fps=3):
             self.minetest_image.open_image_from_array(frame)
 
-            x_values = [x for x in range(0, size[0], size[0] // 30)]
-            y_values = [y for y in reversed(range(0, size[1], size[1] // 30))]
+            x_values = [x for x in range(0, size[0], size[0] // 40)]
+            y_values = [y for y in reversed(range(0, size[1], size[1] // 32))]
 
             for line, x_image in enumerate(x_values):
                 for column, y_image in enumerate(y_values):
-                    pixel_color = self.minetest_image.get_pixel_color(x_image, line)
+                    pixel_color = self.minetest_image.get_pixel_color(x_image, y_image)
                     red, green, blue = pixel_color[0], pixel_color[1], pixel_color[2]
 
                     block_data = self.minetest_knn.find_closest_brick_color(red, green, blue)
+
+                    match block_data:
+                        case 6:
+                            block_data = 0
+                        case 13:
+                            block_data = 15
+                        case 5:
+                            block_data = 0
 
                     updated_x = x + line
                     updated_y = y + column
 
                     self.minetest_client.world_set_block(updated_x, updated_y, z, 35, block_data)
-            print(i)
-        video.reader.close()
+        video.close()
         self.minetest_client.chat_post("Fin de l'affichage")
