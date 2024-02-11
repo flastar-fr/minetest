@@ -14,7 +14,13 @@ def read_json_file(file_path: str) -> {}:
     return file
 
 
-def reduce_frame_rate(video_file: str, target_fps: int):
+def reduce_frame_rate(video_file: str, target_fps: int) -> ImageSequenceClip:
+    """ Function to reduce the video frame rate
+        :param video_file: str -> video file path
+        :param target_fps: int -> FPS to get in the video
+
+        :return ImageSequenceClip -> video in 3 FPS
+    """
     video = VideoFileClip(video_file)
 
     frames_to_keep = int(video.duration * target_fps)

@@ -236,9 +236,10 @@ class MinetestMuseum:
         """
         assert iterations > 5, "Iterations must be higher than 5"
         characters = l_system("A", {"A": "AB", "B": "AC"}, iterations)
-        characters = "A" * 8 + characters   # add a higher trunk
+        characters = "A" * int(iterations*1.5) + characters   # add a higher trunk
 
         x, y, z = coords
+        x, y, z = int(x), int(y), int(z)
 
         nb_c_char = characters.count("C")
 
@@ -308,15 +309,13 @@ class MinetestMuseum:
                     self.minetest_client.world_set_block(x_trunk, y_trunk, z_trunk,
                                                          17, 2)
 
-    def draw_series(self, coords: tuple, left_int: int, right_int: int, expression: ...):
+    def draw_series(self, coords: tuple, expression: ...):
         """ Method to draw a serie at the given coordinates between 2 points in 100 blocs
             :param coords: tuple -> x, y, z coordinates
-            :param left_int: int -> left limit to draw
-            :param right_int: int -> right limit to draw
             :param expression: Any -> serie to draw
         """
-        assert left_int < right_int, "Left cannot be higher than right"
-        assert dist([left_int], [right_int]) <= 100, "Distance between left and right must be higher than 100"
+        left_int = -50
+        right_int = 50
         step = int(dist([left_int], [right_int])//100)
         step = 1 if step == 0 else step
 
@@ -350,6 +349,6 @@ class MinetestMuseum:
                 val = expression(value)
                 if val < y+50:
                     self.minetest_client.world_set_block(x, int(y+val), z, 35, 9)
-                    x += 1
             except ZeroDivisionError:
                 continue
+            x += 1

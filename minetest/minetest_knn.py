@@ -30,6 +30,7 @@ class MinetestKNN:
         """ Method to determine the best argument k for the KNN algorithm
             :return int -> the best k result for the KNN algorithm
         """
+        assert self.datas is not None, "Datas is None"
         # datas extraction
         l_choice = self.datas.loc[:, "choice"]
 
@@ -59,6 +60,7 @@ class MinetestKNN:
         """ Method to setup the knn algorithm and training it with datas
             :param k: int -> k value to give for KNN algorithm
         """
+        assert self.datas is not None, "Datas is None"
         # datas extraction
         l_choice = self.datas.loc[:, "choice"]
 
