@@ -16,4 +16,4 @@ minetest.draw_image_full_3d("LSA_final_test.png", (24000, 200, 0))
 
 # minetest.draw_l_system_tree_bis((21700, 30, 0), 7)
 
-# minetest.draw_series((13000, 100, 0), -50, 50, lambda n: n)
+# minetest.draw_series((25000, 200, 0), -50, 50, lambda n: n)

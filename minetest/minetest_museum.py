@@ -1,5 +1,4 @@
 """ MinetestMuseum File """
-import types
 
 from minetest_knn import MinetestKNN
 from minetest_client import MinetestClient
@@ -59,7 +58,7 @@ class MinetestMuseum:
         self.minetest_knn.open(csv_file)
         self.minetest_knn.train_model(k)
         self.minetest_client.chat_post("Initialisation du KNN réussi")
-        self.minetest_client.chat_post("Lancement des construction")
+        self.minetest_client.chat_post("Musée opérationnel")
 
     def draw_image_2d(self, image_file: str, coords: tuple):
         """ Method to draw a 2d image in Minetest at the given coordinates
@@ -68,15 +67,14 @@ class MinetestMuseum:
         """
         self.minetest_image.open(image_file)
 
-        self.minetest_client.chat_post(f"{image_file} en cours de construction")
-
         image_width = self.minetest_image.get_width()
         image_height = self.minetest_image.get_height()
 
         x, y, z = coords
 
         y += image_height  # reverse image
-        # image process
+        # draw
+        self.minetest_client.chat_post(f"{image_file} en cours de construction")
         for line in range(image_width):
             for column in range(image_height):
                 pixel_colors = self.minetest_image.get_pixel_color(line, column)
@@ -85,10 +83,7 @@ class MinetestMuseum:
 
                     block_data = self.minetest_knn.find_closest_brick_color(red, green, blue)
 
-                    grsc_val = self.minetest_image.get_pixel_grayscale(line, column) // 100  # grayscale
-
-                    self.minetest_client.world_set_blocks(x + line, y - column, z + grsc_val, x + line,
-                                                          y - column, z, 35, block_data)
+                    self.minetest_client.world_set_block(x + line, y - column, z, 35, block_data)
 
         self.minetest_client.chat_post(f"{image_file} est terminé")
 
@@ -99,15 +94,14 @@ class MinetestMuseum:
         """
         self.minetest_image.open(image_file)
 
-        self.minetest_client.chat_post(f"{image_file} en cours de construction")
-
         image_width = self.minetest_image.get_width()
         image_height = self.minetest_image.get_height()
 
         x, y, z = coords
 
         y += image_height  # reverse image
-        # image process
+        # draw
+        self.minetest_client.chat_post(f"{image_file} en cours de construction")
         for line in range(image_width):
             for column in range(image_height):
                 pixel_colors = self.minetest_image.get_pixel_color(line, column)
@@ -130,15 +124,14 @@ class MinetestMuseum:
         """
         self.minetest_image.open(image_file)
 
-        self.minetest_client.chat_post(f"{image_file} en cours de construction")
-
         image_width = self.minetest_image.get_width()
         image_height = self.minetest_image.get_height()
 
         x, y, z = coords
 
         y += image_height  # reverse image
-        # image process
+        # draw
+        self.minetest_client.chat_post(f"{image_file} en cours de construction")
         for line in range(image_width):
             for column in range(image_height):
                 pixel_colors = self.minetest_image.get_pixel_color(line, column)
@@ -148,10 +141,6 @@ class MinetestMuseum:
                     block_data = self.minetest_knn.find_closest_brick_color(red, green, blue)
 
                     grsc_val = self.minetest_image.get_pixel_grayscale(line, column) // 100  # grayscale
-
-                    match block_data:
-                        case 6:
-                            block_data = 0
 
                     self.draw_basic_l_system("A", {"A": "AB", "B": "A"}, grsc_val,
                                              (x+line, y-column, z+grsc_val),
@@ -195,14 +184,16 @@ class MinetestMuseum:
         video = reduce_frame_rate(video_file, 3)
         self.minetest_client.chat_post("Fin de la conversion")
 
-        self.minetest_client.chat_post("Début de l'affichage")
+        # initialize variables
         size = video.size
-
         x_values = [x for x in range(0, size[0], size[0] // 40)]
         y_values = [y for y in reversed(range(0, size[1], size[1] // 32))]
 
         previous_frame = [[15 for _ in y_values] for _ in x_values]
         x, y, z = coords
+
+        # draw
+        self.minetest_client.chat_post("Début de l'affichage")
         for line in range(len(previous_frame)):
             for column in range(len(previous_frame[0])):
                 self.minetest_client.world_set_block(line+x, column+y, z, 35, 15)
@@ -239,14 +230,19 @@ class MinetestMuseum:
         self.minetest_client.chat_post("Fin de l'affichage")
 
     def draw_l_system_tree(self, coords: tuple, iterations: int):
+        """ Method to draw a tree using L-System at the given coordinates
+            :param coords: tuple -> x, y, z coordinates
+            :param iterations: int -> amount of iterations for L-System (tree size)
+        """
         assert iterations > 5, "Iterations must be higher than 5"
         characters = l_system("A", {"A": "AB", "B": "AC"}, iterations)
-        characters = "A" * 8 + characters
+        characters = "A" * 8 + characters   # add a higher trunk
 
         x, y, z = coords
 
         nb_c_char = characters.count("C")
 
+        # draw tree
         for char in characters:
             branch_lenght = "F" * int(nb_c_char // 2)
 
@@ -274,24 +270,31 @@ class MinetestMuseum:
             y += 1
 
     def _draw_l_system_branch(self, coords: tuple, axiom: str, rules: dict):
-        x_trunc, y_trunc, z_trunc = coords
+        """ Private method to draw the branches of the tree following the axiom, rules and coordinates
+            :param coords: tuple -> x, y, z coordinates
+            :param axiom: str -> first input to change
+            :param rules: dict -> rules followed by the axiom
+        """
+        x_trunk, y_trunk, z_trunk = coords
 
         characters = l_system(axiom, rules, 2)
 
         stack = []
 
+        # facing initialize
         facings = {"N": (0, 0, 1), "S": (0, 0, -1), "E": (1, 0, 0), "W": (-1, 0, 0),
                    "NE": (1, 0, 1), "NW": (-1, 0, 1), "SE": (1, 0, -1), "SW": (-1, 0, -1)}
         facings_list = ["W", "NW", "N", "NE", "E", "SE", "S", "SW"]
         index = 2
         facing = facings_list[index]
 
+        # draw
         for char in characters:
             match char:
                 case "[":
-                    stack.append((x_trunc, y_trunc, z_trunc, facing))
+                    stack.append((x_trunk, y_trunk, z_trunk, facing))
                 case "]":
-                    x_trunc, y_trunc, z_trunc, facing = stack.pop()
+                    x_trunk, y_trunk, z_trunk, facing = stack.pop()
                 case "/":
                     index += 1
                     if index >= len(facings_list):
@@ -299,16 +302,21 @@ class MinetestMuseum:
                     facing = facings_list[index]
                 case "F":
                     facing_coordinates = facings[facing]
-                    x_trunc += facing_coordinates[0]
-                    y_trunc += -1
-                    z_trunc += facing_coordinates[2]
-                    self.minetest_client.world_set_block(x_trunc, y_trunc, z_trunc,
+                    x_trunk += facing_coordinates[0]
+                    y_trunk += -1
+                    z_trunk += facing_coordinates[2]
+                    self.minetest_client.world_set_block(x_trunk, y_trunk, z_trunk,
                                                          17, 2)
 
-    def draw_series(self, coords: tuple, left_int: int, right_int: int, expression: types.FunctionType):
+    def draw_series(self, coords: tuple, left_int: int, right_int: int, expression: ...):
+        """ Method to draw a serie at the given coordinates between 2 points in 100 blocs
+            :param coords: tuple -> x, y, z coordinates
+            :param left_int: int -> left limit to draw
+            :param right_int: int -> right limit to draw
+            :param expression: Any -> serie to draw
+        """
         assert left_int < right_int, "Left cannot be higher than right"
-        assert dist([left_int], [right_int]) <= 100, \
-            "Distance between left and right must be higher than 100"
+        assert dist([left_int], [right_int]) <= 100, "Distance between left and right must be higher than 100"
         step = int(dist([left_int], [right_int])//100)
         step = 1 if step == 0 else step
 
@@ -335,7 +343,7 @@ class MinetestMuseum:
         self.minetest_client.world_set_block(x+2, y-2+max(left_int, right_int), z+1,
                                              35, 15)
 
-        # draw function
+        # draw serie
         x += left_int
         for value in range(left_int, right_int, step):
             try:
